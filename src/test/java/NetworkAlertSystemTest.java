@@ -44,6 +44,12 @@ class NetworkAlertSystemTest {
     }
 
     @Test
+    void testFindAlertPropagationPath_UnknownPath() {
+        List<String> path = network.findAlertPropagationPath("A", "E");
+        assertTrue(path.isEmpty(), "No path should return an empty list");
+    }
+
+    @Test
     void testGetAffectedServices() {
         List<String> affected = network.getAffectedServices("A");
 

@@ -32,31 +32,51 @@ public class NetworkAlertSystem implements AlertNetwork {
         }
 
         Queue<String> queue = new LinkedList<>();
-        Set<String> alreadyVisited = new HashSet<>();
+        Map<String, String> parent = new HashMap<>();
+
+        queue.offer(source);
+        parent.put(source, null);
 
         while (!queue.isEmpty()) {
-            String currentNode = queue.remove();
+            String currentNode = queue.poll();
+
             if (currentNode.equals(target)) {
-                break;
+                List<String> path = new ArrayList<>();
+                for (String str = target; str != null; str = parent.get(str)) {
+                    path.add(str);
+                }
+                Collections.reverse(path);
+                return path;
             }
 
             serviceDependencies.getOrDefault(currentNode, List.of())
                     .forEach(dependency -> {
-                        if (!alreadyVisited.contains(dependency)) {
+                        if (!parent.containsKey(dependency)) {
                             queue.add(dependency);
-                            alreadyVisited.add(dependency);
+                            parent.put(dependency, currentNode);
                         }
                     });
         }
 
-        //TODO: jakos cza jeszcze utworzyc patha
-
-        return null;
+        return List.of();
     }
 
     @Override
-    public List<String> getAffectedServices(String source) {
-        return null;
+    public Set<String> getAffectedServices(String source) {
+        Set<String> visited = new HashSet<>();
+        Stack<String> stack = new Stack<>();
+        stack.push(source);
+
+        while(!stack.isEmpty()) {
+            String currentNode = stack.pop();
+
+            if (visited.add(currentNode)) {
+                getDependencies(currentNode).forEach(stack::push);
+            }
+        }
+
+        visited.remove(source);
+        return visited;
     }
 
     @Override

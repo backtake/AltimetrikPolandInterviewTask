@@ -32,8 +32,7 @@ class NetworkAlertSystemTest {
         assertEquals("C", path.getLast(), "Path should end at target");
 
         List<String> validPath1 = List.of("A", "B", "C");
-        List<String> validPath2 = List.of("A", "D", "C");
-        assertTrue(path.equals(validPath1) || path.equals(validPath2), "Path should be one of the shortest paths");
+        assertEquals(path, validPath1, "Path should be the shortest paths");
     }
 
     @Test
@@ -51,17 +50,17 @@ class NetworkAlertSystemTest {
 
     @Test
     void testGetAffectedServices() {
-        List<String> affected = network.getAffectedServices("A");
+        Set<String> affected = network.getAffectedServices("A");
 
-        Set<String> expected = Set.of("B", "C", "D");
+        Set<String> expected = Set.of("D", "C", "B");
         assertEquals(expected.size(), affected.size());
-        assertTrue(affected.containsAll(expected), "Affected services should include B, C, and D");
+        assertTrue(affected.containsAll(expected), "Affected services should include D, C, and B");
     }
 
     @Test
     void testGetAffectedServices_NoDependencies() {
         network.addService("E");
-        List<String> affected = network.getAffectedServices("E");
+        Set<String> affected = network.getAffectedServices("E");
         assertTrue(affected.isEmpty(), "No downstream services should result in empty list");
     }
 

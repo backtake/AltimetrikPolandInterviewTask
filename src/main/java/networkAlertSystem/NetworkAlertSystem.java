@@ -1,11 +1,11 @@
+package networkAlertSystem;
+
+import utils.Pair;
+
 import java.util.*;
 
 public class NetworkAlertSystem implements AlertNetwork {
     private final Map<String, List<String>> serviceDependencies = new HashMap<>();
-
-    public Map<String, List<String>> getServiceDependencies() {
-        return serviceDependencies;
-    }
 
     @Override
     public void addService(String service) {
@@ -81,6 +81,8 @@ public class NetworkAlertSystem implements AlertNetwork {
 
     @Override
     public List<Pair<String, String>> suggestContainmentEdges(String source) {
-        return null;
+        return getDependencies(source).stream()
+                .map(dependency -> new Pair<>(source, dependency))
+                .toList();
     }
 }
